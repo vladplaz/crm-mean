@@ -13,17 +13,18 @@ mongoose.connect(keys.MONGO_URI,{
   .catch((err)=>console.log(err))
 
 app.use(passport.initialize())
-require('./middleware/passport')(passport)g
+require('./middleware/passport')(passport)
 
 app.use(require('morgan')('dev'))
+app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(bodyParser.json())
 app.use(require('cors')())
 
-app.use('api/auth',require('./routes/auth'))
-app.use('api/analytics',require('./routes/analytics'))
-app.use('api/category',require('./routes/category'))
-app.use('api/order',require('./routes/order'))
-app.use('api/position',require('./routes/position'))
+app.use('/api/auth',require('./routes/auth'))
+app.use('/api/analytics',require('./routes/analytics'))
+app.use('/api/category',require('./routes/category'))
+app.use('/api/order',require('./routes/order'))
+app.use('/api/position',require('./routes/position'))
 
 module.exports=app
