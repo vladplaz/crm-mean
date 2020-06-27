@@ -1,28 +1,25 @@
 import {Injectable} from '@angular/core'
-import {User} from "../interfaces"
-import {HttpClient} from "@angular/common/http"
-import {Observable} from "rxjs"
-import {tap} from "rxjs/operators"
+import {HttpClient} from '@angular/common/http'
+import {Observable} from 'rxjs'
+import {User} from '../interfaces'
+import {tap} from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
 
-  private token: string = null
+  private token = null
 
   constructor(private http: HttpClient) {
-
   }
-
 
   register(user: User): Observable<User> {
     return this.http.post<User>('/api/auth/register', user)
   }
 
-  login(user: User): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>('/api/auth/login', user)
+  login(user: User): Observable<{token: string}> {
+    return this.http.post<{token: string}>('/api/auth/login', user)
       .pipe(
         tap(
           ({token}) => {
@@ -37,11 +34,11 @@ export class AuthService {
     this.token = token
   }
 
-  getToken() {
+  getToken(): string {
     return this.token
   }
 
-  isAuthenticated() {
+  isAuthenticated(): boolean {
     return !!this.token
   }
 
@@ -49,5 +46,4 @@ export class AuthService {
     this.setToken(null)
     localStorage.clear()
   }
-
 }

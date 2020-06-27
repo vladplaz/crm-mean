@@ -1,48 +1,40 @@
-import {Component, OnInit} from '@angular/core'
-import {FormControl, FormGroup, Validators} from "@angular/forms"
-import {Subscription} from "rxjs"
-import {AuthService} from "../shared/services/auth.service"
-import {ActivatedRoute, Params, Router} from "@angular/router"
-import {User} from "../shared/interfaces"
-import {MaterialService} from "../shared/classes/material.service"
+import {Component, OnDestroy, OnInit} from '@angular/core'
+import {FormControl, FormGroup, Validators} from '@angular/forms'
+import {AuthService} from '../shared/services/auth.service'
+import {Router} from '@angular/router'
+import {Subscription} from 'rxjs'
+import {MaterialService} from '../shared/classes/material.service'
 
 @Component({
   selector: 'app-register-page',
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.scss']
+  styleUrls: ['./register-page.component.css']
 })
-export class RegisterPageComponent implements OnInit {
+export class RegisterPageComponent implements OnInit, OnDestroy {
 
   form: FormGroup
   aSub: Subscription
 
   constructor(private auth: AuthService,
-              private router: Router,
-              private route: ActivatedRoute) {
+              private router: Router) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.form = new FormGroup({
-      email: new FormControl(null,
-        [Validators.required, Validators.email]),
-      password: new FormControl(null, [Validators.minLength(6), Validators.required])
+      email: new FormControl(null, [Validators.required, Validators.email]),
+      password: new FormControl(null, [Validators.required, Validators.minLength(6)])
     })
-    this.route.queryParams.subscribe((params: Params) => {
-      if (params['registered']) {
-        MaterialService.toast('Вы зарегистрированы')
-      } else if (params['accessDenied']) {
-        MaterialService.toast('Доступ запрещен')
-      }
-    })
+  }
+
+  ngOnDestroy() {
+    if (this.aSub) {
+      this.aSub.unsubscribe()
+    }
   }
 
   onSubmit() {
     this.form.disable()
-    const user: User = {
-      email: this.form.value.email,
-      password: this.form.value.password
-    }
-    this.aSub = this.auth.register(user).subscribe(
+    this.aSub = this.auth.register(this.form.value).subscribe(
       () => {
         this.router.navigate(['/login'], {
           queryParams: {
@@ -55,11 +47,6 @@ export class RegisterPageComponent implements OnInit {
         this.form.enable()
       }
     )
-  }
-
-  ngOnDestroy() {
-    if (this.aSub)
-      this.aSub.unsubscribe()
   }
 
 }
