@@ -1,4 +1,5 @@
-module.exports={
-  MONGO_URI:'mongodb+srv://vlad:vlad12@crm-mean-y9mzb.mongodb.net/crm-mean?retryWrites=true&w=majority',
-  JWT_SECRET:'jwt-secret'
+if(process.env.NODE_ENV === 'production') {
+  module.exports = require('./keys.prod')
+} else {
+  module.exports = require('./keys.dev')
 }
